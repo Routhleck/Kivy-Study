@@ -1,4 +1,68 @@
-PageLayoutExample:
+ImagesExample:
+
+<ImagesExample@GridLayout>:
+    cols: 3
+    Image:
+        id: image1
+        source: "images\mls.jpg"
+    Slider:
+        id: angle_slider
+        min: 0
+        max: 2800
+        value: 50
+        on_value: root.on_slider_value(self)
+        orientation: 'vertical'
+    Label:
+        text: str(angle_slider.value)
+    
+
+
+<WidgetsExample@GridLayout>:
+    cols: 3
+    ToggleButton:
+        text: 'OFF'
+        on_state: root.on_toggle_button_state(self)
+        size_hint: None, 1
+        width: dp(100)
+    Button:
+        text: 'Count'
+        on_press: root.on_button_click()
+        disabled: not root.count_enabled
+    Label:
+        text: root.my_text
+        font_name: "fonts/Lcd.ttf"
+        font_size: "80sp"
+        color: 1, 0, 0, 1
+    Switch:
+        id: my_switch
+        on_active: root.on_switch_active(self)
+        size_hint: None, 1
+        width: dp(100)
+    Slider:
+        id: my_slider
+        min: 0
+        max: 100
+        value: 50
+        on_value: root.on_slider_value(self)
+        orientation: 'vertical'
+        disabled: not my_switch.active
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: str(int(my_slider.value))
+        ProgressBar:
+            max: 100
+            value: my_slider.value
+    TextInput:
+        id: my_text_input
+        text: "foo"
+        size_hint: None, 1
+        width: dp(100)
+        multiline: False
+        on_text_validate: root.on_text_validate(self)
+    Label:
+        text: root.text_input_str
+    
 
 <PageLayoutExample@PageLayout>:
     MainWidget:
