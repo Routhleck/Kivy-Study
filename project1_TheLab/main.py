@@ -1,4 +1,5 @@
 from kivy.app import App
+from kivy.graphics import Line, Color, Rectangle
 from kivy.metrics import dp
 from kivy.properties import StringProperty
 from kivy.properties import BooleanProperty
@@ -87,4 +88,28 @@ class MainWidget(Widget):
 class TheLabApp(App):
     pass
 
+class CanvasExample1(Widget):
+    pass
+
+class CanvasExample2(Widget):
+    pass
+
+class CanvasExample3(Widget):
+    pass
+
+class CanvasExample4(Widget):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        with self.canvas:
+            Line(points=(100,100,400,500))
+            Color(0, 1, 0)
+            Line(circle=(400, 200, 80), width=2)
+            Line(rectangle=(600, 400, 150, 100), width=5)
+            self.rect = Rectangle(pos=(500, 200), size=(150,100))
+    
+    def on_button_a_click(self):
+        print("Button A clicked")
+        x,y = self.rect.pos
+        x += dp(10)
+        self.rect.pos = (x, y)
 TheLabApp().run()
