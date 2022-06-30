@@ -4,4 +4,7 @@
 - [x] Button and Label
 - [x] Layout
 - [x] Widget
-- [ ] Canvas
+- [x] Canvas
+- [x] Galaxy v1
+- [x] Galaxy v2
+- [ ] Galaxy v3
