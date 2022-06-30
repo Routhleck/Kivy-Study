@@ -1,20 +1,24 @@
 import random
 from platform import platform
 from kivy.config import Config
+from kivy.lang import Builder
+from kivy.uix.relativelayout import RelativeLayout
+
 Config.set('graphics', 'width', '1600')
 Config.set('graphics', 'height', '720')
 
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.graphics import Color, Line, Quad, Triangle
-from kivy.properties import NumericProperty, Clock
-from kivy.uix.widget import Widget
+from kivy.properties import NumericProperty, Clock, ObjectProperty
 
+Builder.load_file("menu.kv")
 
-
-class MainWidget(Widget):
+class MainWidget(RelativeLayout):
     from transforms import transform, transform_2D, transform_perspective
     from user_action import _keyboard_closed, on_keyboard_down, on_keyboard_up, on_touch_down, on_touch_up
+
+    menu_widget = ObjectProperty()
     perspective_point_x = NumericProperty(0)
     perspective_point_y = NumericProperty(0)
 
@@ -48,6 +52,9 @@ class MainWidget(Widget):
     ship = None
     ship_coordinates = [(0, 0), (0, 0), (0, 0)]
 
+    state_game_has_started = False
+    state_game_over = False
+
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         print("INIT W: " + str(self.width) + "H: " + str(self.height))
@@ -64,6 +71,18 @@ class MainWidget(Widget):
             self._keyboard.bind(on_key_down=self.on_keyboard_down)
             self._keyboard.bind(on_key_up=self.on_keyboard_up)
         Clock.schedule_interval(self.update, 1.0 / 60.0)
+
+    def reset_game(self):
+        self.current_offset_y = 0
+        self.current_offset_x = 0
+        self.current_speed_x = 0
+        self.current_y_loop = 0
+
+        self.tiles_coordinates = []
+        self.pre_fill_tiles_coordinates()
+        self.generate_tiles_coorinates()
+
+        self.state_game_over = False
     
     #判断是否为linux， Windows， MacOS
     def is_desktop(self):
@@ -232,21 +251,31 @@ class MainWidget(Widget):
         self.update_horizontal_lines()
         self.update_tiles()
         self.update_ship()
-        speed_y = self.speed * self.height / 100
-        self.current_offset_y += speed_y * time_factor
 
-        spacing_y = self.H_LINE_SPACING * self.height
-        if self.current_offset_y >= spacing_y:
-            self.current_offset_y -= spacing_y
-            self.current_y_loop += 1
-            self.generate_tiles_coorinates()
-            print("current_y_loop: " + str(self.current_y_loop))
+        if not self.state_game_over and self.state_game_has_started:
+            speed_y = self.speed * self.height / 100
+            self.current_offset_y += speed_y * time_factor
 
-        speed_x = self.current_speed_x * self.width / 100
-        self.current_offset_x += speed_x * time_factor
+            spacing_y = self.H_LINE_SPACING * self.height
+            while self.current_offset_y >= spacing_y:
+                self.current_offset_y -= spacing_y
+                self.current_y_loop += 1
+                self.generate_tiles_coorinates()
+                print("current_y_loop: " + str(self.current_y_loop))
 
-        if not self.check_ship_collision():
+            speed_x = self.current_speed_x * self.width / 100
+            self.current_offset_x += speed_x * time_factor
+
+        if not self.check_ship_collision() and not self.state_game_over:
+            self.state_game_over = True
+            self.menu_widget.opacity = 1
             print("Game Over!")
+
+    def on_menu_button_pressed(self):
+        self.reset_game()
+        self.state_game_has_started = True
+        self.menu_widget.opacity = 0
+        print("Button")
 class GalaxyApp(App):
     pass
 
