@@ -7,4 +7,4 @@
 - [x] Canvas
 - [x] Galaxy v1
 - [x] Galaxy v2
-- [ ] Galaxy v3
+- [x] Galaxy v3
